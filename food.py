@@ -2,6 +2,7 @@ from random import randint
 
 import constants as C
 
+
 class Food:
     def __init__(self):
         # TODO avoid generating food inside a player

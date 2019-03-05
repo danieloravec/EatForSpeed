@@ -13,6 +13,6 @@ class Player:
         self.x += self.dx[direction] * self.step
         self.y += self.dy[direction] * self.step
 
-    def increase_speed(self, amt=0.5):
+    def food_eaten(self, amt=0.5):
         self.step += amt
         self.score += 1
