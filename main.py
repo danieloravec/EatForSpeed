@@ -73,10 +73,6 @@ def redraw(screen, player, food, level):
     for o in levels[level].obstacles:
         pygame.draw.rect(screen, o.color, (o.x, o.y, o.width, o.height))
     inside = 0 <= player.x and player.x + player.side < C.WIDTH and 0 <= player.y and player.y + player.side < C.HEIGHT
-    if not inside or collision(player, level):
-        return False
-    return True
-
 
 def handle_moves(player):
     pressed = pygame.key.get_pressed()
@@ -126,13 +122,15 @@ def main():
         if not lost:
             handle_moves(player)
             food = handle_food_overlaps(player, food, level)
-            if not redraw(screen, player, food, level):
+            redraw(screen, player, food, level)
+            collided = collision(player, level)
+            if collided:
                 lost_message(screen)
                 lost = True
             if player_won(player, level):
                 level += 1
                 player, food = again(level)
-                redraw(screen, player, food, level)
+                lost = False
         pygame.display.update()
 
 
