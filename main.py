@@ -3,7 +3,7 @@ import pygame
 from player import Player
 from food import Food
 import constants as C
-from levels import levels
+from levels import levels, generate_level
 from helpers import Point
 from obstacle import Obstacle
 
@@ -120,12 +120,13 @@ def main():
                     player, food = again(level)
                     lost = False
                 elif event.key == pygame.K_EQUALS:
-                    player, food = again(level)
                     level += 1
+                    generate_level(level)
+                    player, food = again(level)
                     lost = False
                 elif event.key == pygame.K_MINUS:
+                    level = max(0, level - 1)
                     player, food = again(level)
-                    level -= 1
                     lost = False
         if not lost:
             handle_moves(player)
@@ -137,6 +138,7 @@ def main():
                 lost = True
             if player_won(player, level):
                 level += 1
+                generate_level(level)
                 player, food = again(level)
                 lost = False
         pygame.display.update()
