@@ -119,6 +119,14 @@ def main():
                 if event.key == pygame.K_SPACE:
                     player, food = again(level)
                     lost = False
+                elif event.key == pygame.K_EQUALS:
+                    player, food = again(level)
+                    level += 1
+                    lost = False
+                elif event.key == pygame.K_MINUS:
+                    player, food = again(level)
+                    level -= 1
+                    lost = False
         if not lost:
             handle_moves(player)
             food = handle_food_overlaps(player, food, level)
