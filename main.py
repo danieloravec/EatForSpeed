@@ -80,21 +80,13 @@ def redraw(screen, player, food, level):
 
 def handle_moves(player):
     pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_UP] and pressed[pygame.K_RIGHT]:
-        player.move(C.UP_RIGHT)
-    elif pressed[pygame.K_UP] and pressed[pygame.K_LEFT]:
-        player.move(C.UP_LEFT)
-    elif pressed[pygame.K_DOWN] and pressed[pygame.K_RIGHT]:
-        player.move(C.DOWN_RIGHT)
-    elif pressed[pygame.K_DOWN] and pressed[pygame.K_LEFT]:
-        player.move(C.DOWN_LEFT)
-    elif pressed[pygame.K_LEFT]:
+    if pressed[pygame.K_LEFT] and not pressed[pygame.K_RIGHT]:
         player.move(C.LEFT)
-    elif pressed[pygame.K_RIGHT]:
+    if pressed[pygame.K_RIGHT] and not pressed[pygame.K_LEFT]:
         player.move(C.RIGHT)
-    elif pressed[pygame.K_UP]:
+    if pressed[pygame.K_UP] and not pressed[pygame.K_DOWN]:
         player.move(C.UP)
-    elif pressed[pygame.K_DOWN]:
+    if pressed[pygame.K_DOWN] and not pressed[pygame.K_UP]:
         player.move(C.DOWN)
 
 
