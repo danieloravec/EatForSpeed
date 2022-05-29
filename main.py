@@ -1,4 +1,5 @@
 import pygame
+import math
 
 from player import Player
 from food import Food
@@ -76,14 +77,20 @@ def redraw(screen, player, food, level):
 
 def handle_moves(player):
     pressed = pygame.key.get_pressed()
+    moved = False
     if pressed[pygame.K_LEFT] and not pressed[pygame.K_RIGHT]:
         player.move(C.LEFT)
+        moved = True
     if pressed[pygame.K_RIGHT] and not pressed[pygame.K_LEFT]:
         player.move(C.RIGHT)
+        moved = True
     if pressed[pygame.K_UP] and not pressed[pygame.K_DOWN]:
         player.move(C.UP)
+        moved = True
     if pressed[pygame.K_DOWN] and not pressed[pygame.K_UP]:
         player.move(C.DOWN)
+        moved = True
+    return moved
 
 
 def lost_message(screen):
@@ -129,10 +136,19 @@ def main():
                     player, food = again(level)
                     lost = False
         if not lost:
-            handle_moves(player)
+            moved = handle_moves(player)
+            player.side = player.standing_side
+            if moved:
+                player.side = int(math.ceil(player.standing_side / math.log2(player.step + 1)))
+                diff = player.standing_side - player.side
+                player.x += diff // 2
+                player.y += diff // 2
             food = handle_food_overlaps(player, food, level)
             redraw(screen, player, food, level)
             collided = collision(player, level)
+            if moved:
+                player.x -= diff // 2
+                player.y -= diff // 2
             if collided:
                 lost_message(screen)
                 lost = True

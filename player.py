@@ -2,7 +2,8 @@ class Player:
     def __init__(self):
         self.x = 2
         self.y = 2
-        self.side = 50
+        self.standing_side = 50
+        self.side = self.standing_side
         self.step = 1
         self.dx = (0, 1, 1, 1, 0, -1, -1, -1)
         self.dy = (-1, -1, 0, 1, 1, 1, 0, -1)
