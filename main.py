@@ -3,7 +3,7 @@ import pygame
 from player import Player
 from food import Food
 import constants as C
-from levels import levels
+from levels import levels, generate_level
 from helpers import Point
 from obstacle import Obstacle
 
@@ -131,6 +131,10 @@ def main():
                 if event.key == pygame.K_SPACE:
                     player, food = again(level)
                     lost = False
+                if event.key == pygame.K_l:
+                    player, food = again(level)
+                    player.score = 123123123
+                    lost = False
         if not lost:
             handle_moves(player)
             food = handle_food_overlaps(player, food, level)
@@ -139,6 +143,7 @@ def main():
                 lost = True
             if player_won(player, level):
                 level += 1
+                generate_level(level)
                 player, food = again(level)
                 redraw(screen, player, food, level)
         pygame.display.update()
