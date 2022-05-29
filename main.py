@@ -110,6 +110,7 @@ def again(level):
 
 def main():
     pygame.init()
+    pygame.display.set_caption('EatForSpeed')
     pygame.font.init()
     screen = pygame.display.set_mode((C.WIDTH, C.HEIGHT), 0, 32)
     level = 0
