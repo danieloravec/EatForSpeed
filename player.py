@@ -1,7 +1,7 @@
 class Player:
     def __init__(self):
-        self.x = 0
-        self.y = 0
+        self.x = 2
+        self.y = 2
         self.side = 50
         self.step = 1
         self.dx = (0, 1, 1, 1, 0, -1, -1, -1)
