@@ -1,9 +1,10 @@
 import pygame
+import math
 
 from player import Player
 from food import Food
 import constants as C
-from levels import levels
+from levels import levels, generate_level
 from helpers import Point
 from obstacle import Obstacle
 
@@ -73,29 +74,19 @@ def redraw(screen, player, food, level):
     for o in levels[level].obstacles:
         pygame.draw.rect(screen, o.color, (o.x, o.y, o.width, o.height))
     inside = 0 <= player.x and player.x + player.side < C.WIDTH and 0 <= player.y and player.y + player.side < C.HEIGHT
-    if not inside or collision(player, level):
-        return False
-    return True
-
 
 def handle_moves(player):
     pressed = pygame.key.get_pressed()
-    if pressed[pygame.K_UP] and pressed[pygame.K_RIGHT]:
-        player.move(C.UP_RIGHT)
-    elif pressed[pygame.K_UP] and pressed[pygame.K_LEFT]:
-        player.move(C.UP_LEFT)
-    elif pressed[pygame.K_DOWN] and pressed[pygame.K_RIGHT]:
-        player.move(C.DOWN_RIGHT)
-    elif pressed[pygame.K_DOWN] and pressed[pygame.K_LEFT]:
-        player.move(C.DOWN_LEFT)
-    elif pressed[pygame.K_LEFT]:
+    moved = any(pressed[key] for key in [pygame.K_LEFT, pygame.K_RIGHT, pygame.K_UP, pygame.K_DOWN])
+    if pressed[pygame.K_LEFT] and not pressed[pygame.K_RIGHT]:
         player.move(C.LEFT)
-    elif pressed[pygame.K_RIGHT]:
+    if pressed[pygame.K_RIGHT] and not pressed[pygame.K_LEFT]:
         player.move(C.RIGHT)
-    elif pressed[pygame.K_UP]:
+    if pressed[pygame.K_UP] and not pressed[pygame.K_DOWN]:
         player.move(C.UP)
-    elif pressed[pygame.K_DOWN]:
+    if pressed[pygame.K_DOWN] and not pressed[pygame.K_UP]:
         player.move(C.DOWN)
+    return moved
 
 
 def lost_message(screen):
@@ -115,6 +106,7 @@ def again(level):
 
 def main():
     pygame.init()
+    pygame.display.set_caption('EatForSpeed')
     pygame.font.init()
     screen = pygame.display.set_mode((C.WIDTH, C.HEIGHT), 0, 32)
     level = 0
@@ -131,16 +123,37 @@ def main():
                 if event.key == pygame.K_SPACE:
                     player, food = again(level)
                     lost = False
+                elif event.key == pygame.K_EQUALS:
+                    level += 1
+                    generate_level(level)
+                    player, food = again(level)
+                    lost = False
+                elif event.key == pygame.K_MINUS:
+                    level = max(0, level - 1)
+                    player, food = again(level)
+                    lost = False
         if not lost:
-            handle_moves(player)
+            moved = handle_moves(player)
+            player.side = player.standing_side
+            if moved:
+                player.side = int(math.ceil(player.standing_side / math.log2(player.step + 1)))
+                diff = player.standing_side - player.side
+                player.x += diff // 2
+                player.y += diff // 2
             food = handle_food_overlaps(player, food, level)
-            if not redraw(screen, player, food, level):
+            redraw(screen, player, food, level)
+            collided = collision(player, level)
+            if moved:
+                player.x -= diff // 2
+                player.y -= diff // 2
+            if collided:
                 lost_message(screen)
                 lost = True
             if player_won(player, level):
                 level += 1
+                generate_level(level)
                 player, food = again(level)
-                redraw(screen, player, food, level)
+                lost = False
         pygame.display.update()
 
 
